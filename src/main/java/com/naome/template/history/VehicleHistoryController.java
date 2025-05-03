@@ -1,0 +1,45 @@
+package com.naome.template.history;
+
+import com.naome.template.history.dto.OwnershipHistoryDTO;
+import com.naome.template.vehicle.VehicleRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
+@RestController
+@RequestMapping("/api/history")
+@RequiredArgsConstructor
+public class VehicleHistoryController {
+    private final HistoryRepository historyRepository;
+    private final VehicleRepository vehicleRepository;
+
+    @GetMapping("/vehicle/{vehicleId}")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<List<OwnershipHistoryDTO>> getVehicleHistory(
+            @PathVariable UUID vehicleId) {
+        return ResponseEntity.ok(
+                historyRepository.findByVehicleId(vehicleId).stream()
+                        .map(OwnershipHistoryDTO::fromEntity)
+                        .collect(Collectors.toList())
+        );
+    }
+
+    @GetMapping("/search")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<List<OwnershipHistoryDTO>> searchHistory(
+            @RequestParam(required = false) String oldPlateNumber,
+            @RequestParam(required = false) String newPlateNumber,
+            @RequestParam(required = false) UUID vehicleId) {
+        return ResponseEntity.ok(
+                historyRepository.findByOldPlateNumberOrNewPlateNumberOrVehicleId(
+                        oldPlateNumber,newPlateNumber, vehicleId).stream()
+                        .map(OwnershipHistoryDTO::fromEntity)
+                        .collect(Collectors.toList())
+        );
+    }
+}
