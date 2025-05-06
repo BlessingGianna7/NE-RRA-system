@@ -28,7 +28,7 @@ public class OwnerController {
         return new ResponseEntity<>(createdOwner, HttpStatus.CREATED);
     }
 
-    @GetMapping("/{ownerId}")
+    @GetMapping("/{ownerId}/plate-numbers")
     public ResponseEntity<List<PlateNumberResponseDTO>> getPlateNumberByOwner(@PathVariable UUID ownerId) {
         return new ResponseEntity<>(ownerService.getPlateNumbersByOwner(ownerId), HttpStatus.OK);
     }
