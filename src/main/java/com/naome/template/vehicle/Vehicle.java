@@ -18,7 +18,7 @@ public class Vehicle {
     private UUID id;
 
     private String chassisNumber;
-    private String manufactureCompany;
+    private String manufacturerCompany;
     private int manufactureYear;
     private double price;
     private String modelName;

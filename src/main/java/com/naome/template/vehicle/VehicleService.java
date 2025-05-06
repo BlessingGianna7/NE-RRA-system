@@ -75,47 +75,44 @@ public class VehicleService {
         Owner newOwner = ownerRepository.findById(request.newOwnerId())
                 .orElseThrow(() -> new RuntimeException("New owner not found"));
 
-        // Mark current plate number as available
-        PlateNumber currentPlate = plateRepository.findByVehicleId(request.vehicleId())
+        // 1. Mark current plate number as available
+        PlateNumber currentPlate = plateRepository.findByVehicleId(vehicle.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Current plate not found"));
         currentPlate.setStatus(PlateStatus.AVAILABLE);
         currentPlate.setVehicle(null);
+        currentPlate.setOwner(null);
         plateRepository.save(currentPlate);
 
-        // Get new plate number from new owner
+        // 2. Get an available plate number for new owner
         PlateNumber newPlate = plateRepository.findFirstByOwnerIdAndStatus(newOwner.getId(), PlateStatus.AVAILABLE)
                 .orElseThrow(() -> new RuntimeException("No available plate number for new owner"));
         newPlate.setStatus(PlateStatus.IN_USE);
         newPlate.setVehicle(vehicle);
         plateRepository.save(newPlate);
 
-        // Save ownership history
+        // 3. Save ownership history
         VehicleOwnershipHistory history = new VehicleOwnershipHistory();
         history.setVehicle(vehicle);
         history.setFromOwner(vehicle.getCurrentOwner());
         history.setToOwner(newOwner);
         history.setPurchasePrice(request.purchasePrice());
-        history.setTransferDate(new Date(System.currentTimeMillis()));
+        history.setTransferDate(new Date());
         history.setOldPlateNumber(currentPlate.getPlateNumber());
         history.setNewPlateNumber(newPlate.getPlateNumber());
         historyRepository.save(history);
 
-
-        // Update vehicle
+        // 🔥 4. Update vehicle owner and plate number
         vehicle.setCurrentOwner(newOwner);
+        vehicle.setPlateNumber(newPlate);
         vehicleRepository.save(vehicle);
     }
-
 
     public List<Vehicle> searchByNationalId(String nationalId) {
         return vehicleRepository.findByCurrentOwnerNationalId(nationalId);
     }
 
 
-    public Vehicle searchByChassisNumber(String chassisNumber, String plateNumber) {
-        return vehicleRepository.findByChassisNumberOrPlateNumber_PlateNumber(chassisNumber, plateNumber)
-                .orElseThrow(() -> new RuntimeException("Vehicle not found"));
-    }
+
 
 
 }

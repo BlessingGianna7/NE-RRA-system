@@ -18,7 +18,7 @@ public class VehicleHistoryController {
     private final HistoryRepository historyRepository;
     private final VehicleRepository vehicleRepository;
 
-    @GetMapping("/vehicle/{vehicleId}")
+    @GetMapping("/{vehicleId}")
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<List<OwnershipHistoryDTO>> getVehicleHistory(
             @PathVariable UUID vehicleId) {

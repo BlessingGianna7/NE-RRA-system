@@ -14,4 +14,6 @@ public interface PlateRepository extends JpaRepository<PlateNumber, UUID> {
     Optional<PlateNumber> findFirstByOwnerIdAndStatus(UUID ownerId, PlateStatus status);
 
     Optional<PlateNumber> findByVehicleId(UUID vehicleId);
+
+    Optional<PlateNumber> findFirstByStatus(PlateStatus plateStatus);
 }

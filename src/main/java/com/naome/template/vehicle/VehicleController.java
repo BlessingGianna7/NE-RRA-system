@@ -54,24 +54,4 @@ public class VehicleController {
         return ResponseEntity.ok("Vehicle transferred successfully");
     }
 
-    @GetMapping("/search/by-national-id")
-    public List<Vehicle> searchByNationalId(@RequestParam String nationalId) {
-        return vehicleService.searchByNationalId(nationalId);
-    }
-
-    @GetMapping("/search/by-chassis")
-    public Vehicle searchByChassisOrPlateNumber(
-            @RequestParam(required = false) String chassisNumber,
-            @RequestParam(required = false) String plateNumber
-                                                ) {
-        return vehicleService.searchByChassisNumber(chassisNumber,plateNumber);
-    }
-
-
-    @GetMapping("/vehicles/{id}/history")
-    public List<VehicleOwnershipHistory> getHistory(@PathVariable UUID id) {
-        return historyRepository.findByVehicleId(id);
-    }
-
-
 }
