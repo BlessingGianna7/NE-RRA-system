@@ -66,4 +66,17 @@ public class OwnerService {
                 .collect(Collectors.toList());
     }
 
+    public List<OwnerResponseDTO> getAllOwners() {
+        List<Owner> owners = ownerRepository.findAll();
+        return owners.stream()
+                .map(owner -> new OwnerResponseDTO(
+                        owner.getId(),
+                        owner.getFullNames(),
+                        owner.getNationalId(),
+                        owner.getPhoneNumber(),
+                        owner.getAddress()
+                ))
+                .collect(Collectors.toList());
+    }
+
 }

@@ -47,4 +47,12 @@ public class OwnerController {
             return ResponseEntity.badRequest().body(null);
         }
     }
+
+    @GetMapping("/all")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<List<OwnerResponseDTO>> getAllOwners() {
+        List<OwnerResponseDTO> owners = ownerService.getAllOwners();
+        return new ResponseEntity<>(owners, HttpStatus.OK);
+    }
+
 }
