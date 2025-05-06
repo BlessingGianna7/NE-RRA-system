@@ -1,5 +1,6 @@
 package com.naome.template.history.dto;
 
+import com.naome.template.commons.validation.ValidPlateNumber;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -14,6 +15,7 @@ public record VehicleTranserRequestDTO(
         UUID newOwnerId,
 
         @NotBlank
+        @ValidPlateNumber
         String newPlateNumber,
 
         @Positive

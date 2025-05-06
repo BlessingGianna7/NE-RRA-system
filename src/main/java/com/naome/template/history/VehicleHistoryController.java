@@ -1,5 +1,6 @@
 package com.naome.template.history;
 
+import com.naome.template.commons.validation.ValidPlateNumber;
 import com.naome.template.history.dto.OwnershipHistoryDTO;
 import com.naome.template.vehicle.VehicleRepository;
 import lombok.RequiredArgsConstructor;
@@ -32,8 +33,8 @@ public class VehicleHistoryController {
     @GetMapping("/search")
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<List<OwnershipHistoryDTO>> searchHistory(
-            @RequestParam(required = false) String oldPlateNumber,
-            @RequestParam(required = false) String newPlateNumber,
+            @ValidPlateNumber @RequestParam(required = false) String oldPlateNumber,
+            @ValidPlateNumber @RequestParam(required = false) String newPlateNumber,
             @RequestParam(required = false) UUID vehicleId) {
         return ResponseEntity.ok(
                 historyRepository.findByOldPlateNumberOrNewPlateNumberOrVehicleId(

@@ -2,8 +2,8 @@ package com.naome.template.owner;
 
 import com.naome.template.commons.exceptions.BadRequestException;
 import com.naome.template.owner.dto.OwnerResponseDTO;
+import com.naome.template.owner.dto.PlateNumberResponseDTO;
 import com.naome.template.owner.dto.RegisterOwnerRequestDTO;
-import com.naome.template.vehicle.dto.PlateNumberResponseDTO;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -33,7 +33,7 @@ public class OwnerController {
         return new ResponseEntity<>(ownerService.getPlateNumbersByOwner(ownerId), HttpStatus.OK);
     }
 
-    @GetMapping("/owners/search")
+    @GetMapping("/search")
     public ResponseEntity<List<OwnerResponseDTO>> searchOwners(
             @RequestParam(required = false) String nationalId,
             @RequestParam(required = false) String phoneNumber) {

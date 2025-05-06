@@ -1,5 +1,6 @@
 package com.naome.template.vehicle.dto;
 
+import com.naome.template.commons.validation.ValidPlateNumber;
 import jakarta.validation.constraints.NotNull;
 
 import java.util.UUID;
@@ -12,6 +13,7 @@ public record VehicleTransferRequest(
         UUID newOwnerId,
 
         @NotNull
+        @ValidPlateNumber
         String newPlateNumber,
 
         @NotNull(message = "Transfer price is required")

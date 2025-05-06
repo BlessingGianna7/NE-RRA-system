@@ -2,10 +2,10 @@ package com.naome.template.owner;
 
 import com.naome.template.commons.exceptions.BadRequestException;
 import com.naome.template.owner.dto.OwnerResponseDTO;
+import com.naome.template.owner.dto.PlateNumberResponseDTO;
 import com.naome.template.owner.dto.RegisterOwnerRequestDTO;
 import com.naome.template.owner.mappers.OwnerMapper;
 import com.naome.template.vehicle.Vehicle;
-import com.naome.template.vehicle.dto.PlateNumberResponseDTO;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -62,7 +62,7 @@ public class OwnerService {
         Owner owner = ownerRepository.findById(ownerId).orElseThrow(() -> new BadRequestException("Owner not found"));
         List<Vehicle> plateNumbers = owner.getVehicles();
         return plateNumbers.stream()
-                .map(plateNumber -> new PlateNumberResponseDTO( plateNumber.getPlateNumber()))
+                .map(plateNumber -> new PlateNumberResponseDTO(plateNumber.getPlateNumber().getPlateNumber()))
                 .collect(Collectors.toList());
     }
 
