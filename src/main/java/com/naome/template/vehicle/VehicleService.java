@@ -85,7 +85,7 @@ public class VehicleService {
 
         // 2. Find ANY available plate (not tied to owner)
         PlateNumber newPlate = plateRepository.findFirstByStatus(PlateStatus.AVAILABLE)
-                .orElseThrow(() -> new RuntimeException("No available plate numbers in system"));
+                .orElseThrow(() -> new ResourceNotFoundException("No available plate numbers in system"));
 
         // 3. Assign to new owner and vehicle
         newPlate.setStatus(PlateStatus.IN_USE);
