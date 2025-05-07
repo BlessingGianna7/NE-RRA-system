@@ -36,7 +36,7 @@ public class EmailService {
             Context context = new Context();
             context.setVariable("name", name);
             context.setVariable("otp", otp);
-            context.setVariable("companyName", "BNR Bank");
+            context.setVariable("companyName", "RRA");
             context.setVariable("expirationTime", "10");
             MimeMessage mimeMessage = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, MimeMessageHelper.MULTIPART_MODE_MIXED);
@@ -59,7 +59,7 @@ public class EmailService {
 
             helper.setText(process, true);
             helper.setTo(to);
-            helper.setFrom("noreply@bnr.com");
+            helper.setFrom("tuyishimenaome27@gmail.com");
             mailSender.send(mimeMessage);
         } catch (MessagingException e) {
             log.error("Unable to send the email", e);
