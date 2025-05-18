@@ -27,9 +27,9 @@ public class UserService {
 
         var newUser = userMapper.toEntity(user);
         newUser.setPassword(passwordEncoder.encode(user.password()));
-        newUser.setRole(Role.ADMIN);
-        newUser.setEnabled(true);
-        log.info("Admin user created: {}", newUser);
+        newUser.setRole(user.role() != null ? user.role() : Role.USER);
+        newUser.setEnabled(user.role() == Role.ADMIN);
+        log.info("User created with role {}: {}", newUser.getRole(), newUser);
         userRepository.save(newUser);
         return userMapper.toResponseDTO(newUser);
     }
