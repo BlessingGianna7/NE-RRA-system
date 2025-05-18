@@ -1,62 +1,63 @@
 package com.naome.template.auth;
 
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
+import java.util.concurrent.TimeUnit;
+
 import org.springframework.stereotype.Service;
 
-import java.util.concurrent.TimeUnit;
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
+
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @AllArgsConstructor
 @Service
 @Slf4j
 public class OtpService {
-    private final RedisTemplate<String, String> redisTemplate;
+    private final Cache<String, String> otpCache;
 
-    private final ValueOperations<String, String> valueOperations;
+    public OtpService() {
+        this.otpCache = Caffeine.newBuilder()
+                .expireAfterWrite(10, TimeUnit.MINUTES)
+                .maximumSize(1000)
+                .build();
+    }
 
-    String generateOtp(String userEmail, OtpType otpType){
+    String generateOtp(String userEmail, OtpType otpType) {
         var otp = generateOtp();
         String key = generateKey(userEmail, otp, otpType);
         storeOtp(key, otp);
         return otp;
     }
 
-    boolean verifyOtp(String userEmail, String otp, OtpType otpType){
+    boolean verifyOtp(String userEmail, String otp, OtpType otpType) {
         String key = generateKey(userEmail, otp, otpType);
-        if (hasOtp(key)){
-            String storedOtp = getOtp(key);
-            if (storedOtp.equals(otp)){
-                deleteOtp(key);
-                return true;
-            }
+        String storedOtp = getOtp(key);
+        if (storedOtp != null && storedOtp.equals(otp)) {
+            deleteOtp(key);
+            return true;
         }
         return false;
     }
 
-    private String getOtp(String key){
-        return valueOperations.get(key);
+    private String getOtp(String key) {
+        return otpCache.getIfPresent(key);
     }
 
-    private void deleteOtp(String key){
-        redisTemplate.delete(key);
+    private void deleteOtp(String key) {
+        otpCache.invalidate(key);
     }
 
-    private boolean hasOtp(String key){
-        return redisTemplate.hasKey(key);
+    private String generateKey(String userEmail, String otp, OtpType otpType) {
+        return String.format("%s:%s:%s", otpType.toString(), userEmail, otp);
     }
 
-    private String generateKey(String userEmail,String otp, OtpType otpType){
-        return String.format("%s:%s:%s",otpType.toString(), userEmail, otp);
+    private void storeOtp(String key, String otp) {
+        otpCache.put(key, otp);
+        log.info("Storing OTP successfully");
     }
 
-    private void storeOtp(String key, String otp){
-        valueOperations.set(key, otp, 10, TimeUnit.MINUTES);
-        log.info("Storing otp is going successfully");
-    }
-
-    private String generateOtp(){
+    private String generateOtp() {
         StringBuilder otp = new StringBuilder();
         for (int i = 0; i < 6; i++) {
             int digit = (int) (Math.random() * 10);

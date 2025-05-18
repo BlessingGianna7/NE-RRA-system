@@ -1,13 +1,15 @@
 package com.naome.template.user;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
 import com.naome.template.auth.dtos.RegisterRequestDTO;
 import com.naome.template.commons.exceptions.BadRequestException;
 import com.naome.template.user.dtos.UserResponseDTO;
 import com.naome.template.user.mappers.UserMapper;
+
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
 
 @Service
 @AllArgsConstructor
@@ -25,12 +27,11 @@ public class UserService {
 
         var newUser = userMapper.toEntity(user);
         newUser.setPassword(passwordEncoder.encode(user.password()));
-        newUser.setRole(Role.USER);
-        newUser.setEnabled(false);
-        log.info("User created: {}", newUser);
+        newUser.setRole(Role.ADMIN);
+        newUser.setEnabled(true);
+        log.info("Admin user created: {}", newUser);
         userRepository.save(newUser);
         return userMapper.toResponseDTO(newUser);
-
     }
 
     public void changeUserPassword(String userEmail, String newPassword){

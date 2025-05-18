@@ -38,8 +38,10 @@ public class EmailService {
             context.setVariable("otp", otp);
             context.setVariable("companyName", "RRA");
             context.setVariable("expirationTime", "10");
+
             MimeMessage mimeMessage = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, MimeMessageHelper.MULTIPART_MODE_MIXED);
+
             String process = "";
             String templateName = "";
 
@@ -47,24 +49,29 @@ public class EmailService {
                 case VERIFY_ACCOUNT -> {
                     templateName = OtpType.VERIFY_ACCOUNT.name().toLowerCase();
                     process = templateEngine.process(templateName, context);
-                    helper.setSubject("Verify your account with - One time Password (OTP) Required.");
+                    helper.setSubject("Verify your account - OTP Required.");
                 }
                 case RESET_PASSWORD -> {
                     templateName = OtpType.RESET_PASSWORD.name().toLowerCase();
                     process = templateEngine.process(templateName, context);
-                    helper.setSubject("Reset your password with - One time Password (OTP) Required.");
+                    helper.setSubject("Reset your password - OTP Required.");
                 }
-                default -> log.error("Invalid otp type detected!");
+                default -> throw new IllegalArgumentException("Invalid otp type detected!");
             }
 
             helper.setText(process, true);
             helper.setTo(to);
-            helper.setFrom("tuyishimenaome27@gmail.com");
+            helper.setFrom("blessinggianna7@gmail.com");
+
+            log.info("Sending email to {} with subject: {}", to, helper.getMimeMessage().getSubject());
             mailSender.send(mimeMessage);
-        } catch (MessagingException e) {
-            log.error("Unable to send the email", e);
+            log.info("Email sent successfully to {}", to);
+
+        } catch (Exception e) {
+            log.error("Unable to send the email", e); // Catch everything, not just MessagingException
         }
     }
+
 
 
 }
